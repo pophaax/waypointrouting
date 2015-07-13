@@ -1,9 +1,15 @@
 #include "TimedWaypoint.h"
 
-TimedWaypoint::TimedWaypoint(WaypointModel waypoint) :
-	StandardWaypoint(waypoint),
+TimedWaypoint::TimedWaypoint(WaypointModel waypoint, int starboardExtreme,
+	int midships, int closeReach, int running, double tackAngle, double sectorAngle) :
+	StandardWaypoint(waypoint, starboardExtreme, midships, closeReach, running, tackAngle, sectorAngle)
 {
 }
+
+TimedWaypoint::~TimedWaypoint()
+{
+}
+
 
 bool TimedWaypoint::nextWaypoint()
 {

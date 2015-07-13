@@ -1,9 +1,19 @@
 #include "StandardWaypoint.h"
 
-StandardWaypoint::StandardWaypoint(WaypointModel waypoint) :
+StandardWaypoint::StandardWaypoint(WaypointModel waypoint, int starboardExtreme,
+	int midships, int closeReach, int running, double tackAngle, double sectorAngle) :
 	m_waypoint(waypoint)//fix assignment constructor / copy construct???
 {
+	m_sailCommand.setCommandValues(closeReach, running);
+	m_rudderCommand.setCommandValues(starboardExtreme, midships);
+	m_courseCalc.setTackAngle(45.0);
+	m_courseCalc.setSectorAngle(5.0);
 }
+
+StandardWaypoint::~StandardWaypoint()
+{
+}
+
 
 bool StandardWaypoint::nextWaypoint()
 {

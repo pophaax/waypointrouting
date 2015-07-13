@@ -11,7 +11,8 @@
 class StandardWaypoint
 {
 public:
-	explicit StandardWaypoint(WaypointModel waypoint);
+	StandardWaypoint(WaypointModel waypoint, int starboardExtreme,
+		int midships, int closeReach, int running, double tackAngle, double sectorAngle);
 	StandardWaypoint(const StandardWaypoint &) = delete;
 	StandardWaypoint & operator=(const StandardWaypoint &) = delete;
 	virtual ~StandardWaypoint();

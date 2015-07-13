@@ -1,11 +1,9 @@
 #ifndef __WAYPOINTROUTING_H__
 #define __WAYPOINTROUTING_H__
 
+#include <memory>
 #include "StandardWaypoint.h"
 #include "TimedWaypoint.h"
-#include "../models/SystemStateModel.h"
-#include "../models/PositionModel.h"
-#include "../models/WaypointModel.h"
 
 class WaypointRouting
 {
@@ -16,11 +14,17 @@ public:
 	~WaypointRouting();
 
 	void setSystemStateCommands(SystemStateModel & systemState,
-		PositionModel boat, double trueWindDirection);	
+		PositionModel boat, double trueWindDirection);
 	bool nextWaypoint();
 	void setWaypoint(WaypointModel waypoint);
+	void setRudderCommandValues(int starboardExtreme, int midships);
+	void setSailCommandValues(int closeReach, int running);
+	void setCourseCalcValues(double tackAngle, double sectorAngle);
+
 private:
-	StandardWaypoint m_waypoint;
+	std::unique_ptr<StandardWaypoint> m_waypoint;
+	int m_starboardExtreme, m_midships, m_closeReach, m_running;
+	double m_tackAngle, m_sectorAngle;
 };
 
 #endif

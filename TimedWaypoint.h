@@ -7,7 +7,8 @@
 class TimedWaypoint : public StandardWaypoint
 {
 public:
-	TimedWaypoint(WaypointModel waypoint);
+	explicit TimedWaypoint(WaypointModel waypoint, int starboardExtreme,
+		int midships, int closeReach, int running, double tackAngle, double sectorAngle);
 	TimedWaypoint(const TimedWaypoint &) = delete;
 	TimedWaypoint & operator=(const TimedWaypoint &) = delete;
 	~TimedWaypoint() override;
