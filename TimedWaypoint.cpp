@@ -1,8 +1,9 @@
 #include "TimedWaypoint.h"
+#include <iostream>
 
-TimedWaypoint::TimedWaypoint(WaypointModel waypoint, int starboardExtreme,
-	int midships, int closeReach, int running, double tackAngle, double sectorAngle) :
-	StandardWaypoint(waypoint, starboardExtreme, midships, closeReach, running, tackAngle, sectorAngle)
+TimedWaypoint::TimedWaypoint(const WaypointModel waypoint, const double tackAngle, const double sectorAngle) :
+	StandardWaypoint(waypoint, tackAngle, sectorAngle),
+	m_clockGoing(false)
 {
 }
 
@@ -10,26 +11,44 @@ TimedWaypoint::~TimedWaypoint()
 {
 }
 
-
-bool TimedWaypoint::nextWaypoint()
+bool TimedWaypoint::nextWaypoint(const PositionModel boat) const
 {
 	bool nextWaypoint = false;
-/*	if (timeOK && reachedWaypoint())
+	if (timeDone())
 		nextWaypoint = true;
-*/
 	return nextWaypoint;
 }
 
-void TimedWaypoint::setSystemStateCommands(SystemStateModel & systemState,
-		PositionModel boat, double trueWindDirection)
+double TimedWaypoint::getCourseToSteer(const PositionModel boat, const double trueWindDirection)
 {
-	if (!reachedWaypoint())
+	double cts = 0.0;
+	if (!StandardWaypoint::reachedRadius(m_waypoint.innerRadius, boat))
 	{
-		//set clock to 0?
-		StandardWaypoint::setSystemStateCommands(systemState, boat, trueWindDirection);
+		// WANT THIS???? m_clockGoing = false;
+		cts = StandardWaypoint::getCourseToSteer(boat, trueWindDirection);
 	}
 	else
 	{
-		//startclockblablabla
+		if (!m_clockGoing)
+		{
+			m_clockStart = std::chrono::steady_clock::now();
+			m_clockGoing = true;
+		}
+		cts = trueWindDirection;
 	}
+	return cts;
+}
+
+bool TimedWaypoint::timeDone() const
+{
+	bool done = false;
+	if (m_clockGoing)
+	{
+		std::chrono::steady_clock::time_point clockEnd = std::chrono::steady_clock::now();
+		std::chrono::duration<double> timeSpan =
+			std::chrono::duration_cast<std::chrono::duration<double>>(clockEnd - m_clockStart);
+		if (timeSpan.count() > static_cast<double>(m_waypoint.time))
+			done = true;
+	}
+	return done;
 }

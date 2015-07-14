@@ -1,13 +1,10 @@
 #include "StandardWaypoint.h"
 
-StandardWaypoint::StandardWaypoint(WaypointModel waypoint, int starboardExtreme,
-	int midships, int closeReach, int running, double tackAngle, double sectorAngle) :
+StandardWaypoint::StandardWaypoint(const WaypointModel waypoint, const double tackAngle, const double sectorAngle) :
 	m_waypoint(waypoint)//fix assignment constructor / copy construct???
 {
-	m_sailCommand.setCommandValues(closeReach, running);
-	m_rudderCommand.setCommandValues(starboardExtreme, midships);
-	m_courseCalc.setTackAngle(45.0);
-	m_courseCalc.setSectorAngle(5.0);
+	m_courseCalc.setTackAngle(tackAngle);
+	m_courseCalc.setSectorAngle(sectorAngle);
 }
 
 StandardWaypoint::~StandardWaypoint()
@@ -15,25 +12,27 @@ StandardWaypoint::~StandardWaypoint()
 }
 
 
-bool StandardWaypoint::nextWaypoint()
+bool StandardWaypoint::nextWaypoint(const PositionModel boat) const
 {
-	return reachedWaypoint();
+	bool nextWaypoint = false;
+	if (reachedRadius(m_waypoint.radius, boat))
+		nextWaypoint = true;
+	return nextWaypoint;
 }
 
-void StandardWaypoint::setSystemStateCommands(SystemStateModel & systemState,
-		PositionModel boat, double trueWindDirection)
+double StandardWaypoint::getCourseToSteer(const PositionModel boat, const double trueWindDirection)
 {
 	m_courseCalc.setTrueWindDirection(trueWindDirection);
 	m_courseCalc.calculateCourseToSteer(boat, m_waypoint);
-	systemState.rudder = m_rudderCommand.getCommand(
-		m_courseCalc.getCTS(), systemState.compassModel.heading);
-	systemState.sail = m_sailCommand.getCommand(systemState.windsensorModel.direction);
+	return m_courseCalc.getCTS();
 }
 
-bool StandardWaypoint::reachedWaypoint()
+bool StandardWaypoint::reachedRadius(const double radius, const PositionModel boat) const
 {
-	bool reachedWaypoint = false;
-	if (m_courseCalc.getDTW() < m_waypoint.radius)
-		reachedWaypoint = true;
-	return reachedWaypoint;
+	bool reachedRadius = false;
+	double dtw = m_courseMath.calculateDTW(boat, m_waypoint.positionModel);
+	if (dtw < radius)
+		reachedRadius = true;
+	return reachedRadius;
 }
+

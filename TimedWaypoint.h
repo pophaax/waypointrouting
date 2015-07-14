@@ -3,20 +3,23 @@
 #define __TIMEDWAYPOINT_H__
 
 #include "StandardWaypoint.h"
+#include <chrono>
 
 class TimedWaypoint : public StandardWaypoint
 {
 public:
-	explicit TimedWaypoint(WaypointModel waypoint, int starboardExtreme,
-		int midships, int closeReach, int running, double tackAngle, double sectorAngle);
+	TimedWaypoint(const WaypointModel waypoint, const double tackAngle, const double sectorAngle);
 	TimedWaypoint(const TimedWaypoint &) = delete;
 	TimedWaypoint & operator=(const TimedWaypoint &) = delete;
 	~TimedWaypoint() override;
 
-	bool nextWaypoint() override;
-	void setSystemStateCommands(SystemStateModel & systemState,
-		PositionModel boat, double trueWindDirection) override;
+	bool nextWaypoint(const PositionModel boat) const override;
+	double getCourseToSteer(const PositionModel boat, const double trueWindDirection) override;
 
+private:
+	bool timeDone() const;
+	std::chrono::steady_clock::time_point m_clockStart;
+	bool m_clockGoing;
 };
 
 #endif

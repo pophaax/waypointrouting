@@ -13,17 +13,13 @@ public:
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
 
-	void setSystemStateCommands(SystemStateModel & systemState,
-		PositionModel boat, double trueWindDirection);
-	bool nextWaypoint();
-	void setWaypoint(WaypointModel waypoint);
-	void setRudderCommandValues(int starboardExtreme, int midships);
-	void setSailCommandValues(int closeReach, int running);
-	void setCourseCalcValues(double tackAngle, double sectorAngle);
+	double getCourseToSteer(const PositionModel boat, const double trueWindDirection) const;
+	bool nextWaypoint(const PositionModel boat) const;
+	void setWaypoint(const WaypointModel waypoint);
+	void setCourseCalcValues(const double tackAngle, const double sectorAngle);
 
 private:
 	std::unique_ptr<StandardWaypoint> m_waypoint;
-	int m_starboardExtreme, m_midships, m_closeReach, m_running;
 	double m_tackAngle, m_sectorAngle;
 };
 
