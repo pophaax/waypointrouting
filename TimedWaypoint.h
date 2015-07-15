@@ -17,9 +17,10 @@ public:
 	double getCourseToSteer(const PositionModel boat, const double trueWindDirection) override;
 
 private:
-	bool timeDone() const;
-	std::chrono::steady_clock::time_point m_clockStart;
-	bool m_clockGoing;
+	bool timerDone() const;
+	void startTimer();
+	std::chrono::steady_clock::time_point m_timerStart;
+	bool m_timerRunning;
 };
 
 #endif

@@ -1,7 +1,8 @@
 #include "StandardWaypoint.h"
 
-StandardWaypoint::StandardWaypoint(const WaypointModel waypoint, const double tackAngle, const double sectorAngle) :
-	m_waypoint(waypoint)//fix assignment constructor / copy construct???
+StandardWaypoint::StandardWaypoint(const WaypointModel waypoint,
+	const double tackAngle, const double sectorAngle) :
+	m_waypoint(waypoint)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
@@ -35,4 +36,3 @@ bool StandardWaypoint::reachedRadius(const double radius, const PositionModel bo
 		reachedRadius = true;
 	return reachedRadius;
 }
-
