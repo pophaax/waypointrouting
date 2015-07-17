@@ -1,26 +1,40 @@
 #ifndef __WAYPOINTROUTING_H__
 #define __WAYPOINTROUTING_H__
 
-#include <memory>
-#include "StandardWaypoint.h"
-#include "TimedWaypoint.h"
+#include <chrono>
+#include "models/PositionModel.h"
+#include "models/WaypointModel.h"
+#include "coursecalculation/CourseCalculation.h"
 
 class WaypointRouting
 {
 public:
-	WaypointRouting();
+	WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
+		double tackAngle, double sectorAngle);
 	WaypointRouting(const WaypointRouting &) = delete;
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
 
-	double getCourseToSteer(const PositionModel boat, const double trueWindDirection) const;
-	bool nextWaypoint(const PositionModel boat) const;
-	void setWaypoint(const WaypointModel waypoint);
-	void setCourseCalcValues(const double tackAngle, const double sectorAngle);
+	double getCourseToSteer(PositionModel boat, double trueWindDirection);
+	bool nextWaypoint(PositionModel boat);
+	void setWaypoint(WaypointModel waypoint);
+	void setCourseCalcValues(double tackAngle, double sectorAngle);
+	void setInnerRadiusRatio(double ratio);
 
 private:
-	std::unique_ptr<StandardWaypoint> m_waypoint;
-	double m_tackAngle, m_sectorAngle;
+	double timedCTS(PositionModel boat, double trueWindDirection);
+	bool reachedRadius(double radius, PositionModel boat) const;
+	double getCTSFromCourseCalc(PositionModel boat, double trueWindDirection);
+	WaypointModel m_waypoint;
+	CourseCalculation m_courseCalc;
+	CourseMath m_courseMath;
+	double m_innerRadiusRatio;
+
+	//timer
+	bool timerDone() const;
+	void startTimer();
+	std::chrono::steady_clock::time_point m_timerStart;
+	bool m_timerRunning;
 };
 
 #endif
