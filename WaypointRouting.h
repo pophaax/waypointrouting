@@ -15,11 +15,18 @@ public:
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
 
-	double getCourseToSteer(PositionModel boat, double trueWindDirection);
+	double calculateCourseToSteer(PositionModel boat, double trueWindDirection);
 	bool nextWaypoint(PositionModel boat);
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
 	void setInnerRadiusRatio(double ratio);
+
+	double getDTW();
+	double getCTS();
+	double getBTW();
+	double getTWD();
+	bool getTack();
+	bool getGoingStarboard();
 
 private:
 	double timedCTS(PositionModel boat, double trueWindDirection);
