@@ -2,9 +2,10 @@
 #define __WAYPOINTROUTING_H__
 
 #include <chrono>
-#include "models/PositionModel.h"
 #include "models/WaypointModel.h"
 #include "coursecalculation/CourseCalculation.h"
+
+class PositionModel;
 
 class WaypointRouting
 {
