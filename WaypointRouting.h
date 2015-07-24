@@ -22,7 +22,6 @@ public:
 	void setInnerRadiusRatio(double ratio);
 
 	double getDTW();
-	double getCTS();
 	double getBTW();
 	double getTWD();
 	bool getTack();

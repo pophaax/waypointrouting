@@ -65,22 +65,21 @@ double WaypointRouting::getDTW()
 	return m_courseCalc.getDTW();
 }
 
-double WaypointRouting::getCTS()
-{
-	return m_courseCalc.getCTS();
-}
 double WaypointRouting::getBTW()
 {
 	return m_courseCalc.getBTW();
 }
+
 double WaypointRouting::getTWD()
 {
 	return m_courseCalc.getTWD();
 }
+
 bool WaypointRouting::getTack()
 {
 	return m_courseCalc.getTack();
 }
+
 bool WaypointRouting::getGoingStarboard()
 {
 	return m_courseCalc.getGoingStarboard();
