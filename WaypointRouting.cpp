@@ -1,4 +1,7 @@
 #include "WaypointRouting.h"
+#include "models/WaypointModel.h"
+#include "coursecalculation/CourseCalculation.h"
+#include "utility/Timer.h"
 
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
 		double tackAngle, double sectorAngle) :
@@ -30,10 +33,13 @@ bool WaypointRouting::nextWaypoint(PositionModel boat)
 	bool nextWaypoint = false;
 	if (m_waypoint.time > 0)
 	{
-		if (timerDone())
+		if (m_timer.timeUntil(m_waypoint.time) <= 0 && m_timerRunning)
 			nextWaypoint = true;
-		if (reachedRadius(m_waypoint.radius, boat))
-			startTimer();
+		if (reachedRadius(m_waypoint.radius, boat) && !m_timerRunning)
+		{
+			m_timer.start();
+			m_timerRunning = true;
+		}
 	}
 	else
 	{
@@ -119,27 +125,4 @@ double WaypointRouting::getCTSFromCourseCalc(PositionModel boat, double trueWind
 	m_courseCalc.setTrueWindDirection(trueWindDirection);
 	m_courseCalc.calculateCourseToSteer(boat, m_waypoint);
 	return m_courseCalc.getCTS();
-}
-
-bool WaypointRouting::timerDone() const
-{
-	bool done = false;
-	if (m_timerRunning)
-	{
-		using namespace std::chrono;
-		steady_clock::time_point clockEnd = steady_clock::now();
-		auto timeSpan = duration_cast<seconds>(clockEnd - m_timerStart);
-		if (timeSpan.count() >= m_waypoint.time)
-			done = true;
-	}
-	return done;
-}
-
-void WaypointRouting::startTimer()
-{
-	if (!m_timerRunning)
-	{
-		m_timerStart = std::chrono::steady_clock::now();
-		m_timerRunning = true;
-	}	
 }
