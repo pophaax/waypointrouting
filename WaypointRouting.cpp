@@ -1,7 +1,9 @@
 #include "WaypointRouting.h"
+#include <math.h>
 #include "models/WaypointModel.h"
 #include "coursecalculation/CourseCalculation.h"
 #include "utility/Timer.h"
+#include "utility/Utility.h"
 
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
 		double tackAngle, double sectorAngle) :
@@ -123,4 +125,32 @@ double WaypointRouting::getCTSFromCourseCalc(PositionModel boat, double trueWind
 	m_courseCalc.setTrueWindDirection(trueWindDirection);
 	m_courseCalc.calculateCourseToSteer(boat, m_waypoint);
 	return m_courseCalc.getCTS();
+}
+
+
+double WaypointRouting::rudderCommand(double courseToSteer, double heading)
+{
+	double offCourse = courseToSteer - heading;
+	double steeringValue = 0;
+
+	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
+		steeringValue = sin(Utility::degreeToRadian(offCourse));
+	}
+	else {
+		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
+			steeringValue = 1;
+		}
+		else {
+			steeringValue = -1;
+		}
+	}
+	return steeringValue;
+}
+
+
+double WaypointRouting::sailCommand(double relativeWindDirection)
+{
+	double mid = 0.5;
+	double delta = 0.5;
+	return mid - cos(Utility::degreeToRadian(relativeWindDirection)) * delta;
 }

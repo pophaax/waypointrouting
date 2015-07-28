@@ -21,6 +21,8 @@ public:
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
 	void setInnerRadiusRatio(double ratio);
+	double rudderCommand(double courseToSteer, double heading);
+	double sailCommand(double relativeWindDirection);
 
 	double getDTW();
 	double getBTW();
