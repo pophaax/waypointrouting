@@ -38,7 +38,6 @@ private:
 	CourseMath m_courseMath;
 	double m_innerRadiusRatio;
 	Timer m_timer;
-	bool m_timerRunning;
 };
 
 #endif

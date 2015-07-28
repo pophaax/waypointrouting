@@ -6,8 +6,7 @@
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
 		double tackAngle, double sectorAngle) :
 	m_waypoint(waypoint),
-	m_innerRadiusRatio(innerRadiusRatio),
-	m_timerRunning(false)
+	m_innerRadiusRatio(innerRadiusRatio)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
@@ -33,12 +32,11 @@ bool WaypointRouting::nextWaypoint(PositionModel boat)
 	bool nextWaypoint = false;
 	if (m_waypoint.time > 0)
 	{
-		if (m_timer.timeUntil(m_waypoint.time) <= 0 && m_timerRunning)
+		if (m_timer.timeReached(m_waypoint.time))
 			nextWaypoint = true;
-		if (reachedRadius(m_waypoint.radius, boat) && !m_timerRunning)
+		if (reachedRadius(m_waypoint.radius, boat))
 		{
 			m_timer.start();
-			m_timerRunning = true;
 		}
 	}
 	else
@@ -52,7 +50,7 @@ bool WaypointRouting::nextWaypoint(PositionModel boat)
 void WaypointRouting::setWaypoint(WaypointModel waypoint)
 {
 	m_waypoint = waypoint;
-	m_timerRunning = false;
+	m_timer.stop();
 }
 
 void WaypointRouting::setCourseCalcValues(double tackAngle, double sectorAngle)
