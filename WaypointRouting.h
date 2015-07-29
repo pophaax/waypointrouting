@@ -16,7 +16,9 @@ public:
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
 
-	double calculateCourseToSteer(PositionModel boat, double trueWindDirection);
+	void getCommands(double & rudder, double & sail, PositionModel boat,
+		double trueWindDirection, double heading, double relativeWindDirection);
+	//double calculateCourseToSteer(PositionModel boat, double trueWindDirection);
 	bool nextWaypoint(PositionModel boat);
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
@@ -27,11 +29,12 @@ public:
 	double getDTW();
 	double getBTW();
 	double getTWD();
+	double getCTS();
 	bool getTack();
 	bool getGoingStarboard();
 
 private:
-	double timedCTS(PositionModel boat, double trueWindDirection);
+	//double timedCTS(PositionModel boat, double trueWindDirection);
 	bool reachedRadius(double radius, PositionModel boat) const;
 	double getCTSFromCourseCalc(PositionModel boat, double trueWindDirection);
 
@@ -40,6 +43,7 @@ private:
 	CourseMath m_courseMath;
 	double m_innerRadiusRatio;
 	Timer m_timer;
+	double m_courseToSteer;
 };
 
 #endif
