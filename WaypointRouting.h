@@ -41,6 +41,11 @@ private:
 	double m_innerRadiusRatio;
 	Timer m_timer;
 	double m_courseToSteer;
+
+	const double m_starboardExtreme;
+	const double m_portExtreme;
+	const double m_closeReach;
+	const double m_running;
 };
 
 #endif
