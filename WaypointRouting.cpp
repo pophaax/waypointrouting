@@ -126,16 +126,18 @@ double WaypointRouting::rudderCommand(double courseToSteer, double heading)
 {
 	double offCourse = courseToSteer - heading;
 	double steeringValue = 0;
+	const double starboardExtreme = 1;
+	const double portExtreme = -1;	
 
 	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
 		steeringValue = sin(Utility::degreeToRadian(offCourse));
 	}
 	else {
 		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
-			steeringValue = 1;
+			steeringValue = starboardExtreme;
 		}
 		else {
-			steeringValue = -1;
+			steeringValue = portExtreme;
 		}
 	}
 	return steeringValue;
