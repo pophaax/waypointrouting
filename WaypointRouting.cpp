@@ -23,20 +23,11 @@ WaypointRouting::~WaypointRouting()
 void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel boat,
 	double trueWindDirection, double heading, double relativeWindDirection)
 {
-	if (m_waypoint.time > 0)
+	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat))
 	{
-		if (reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat))
-		{
-			m_courseToSteer = trueWindDirection;
-			rudder = rudderCommand(m_courseToSteer, heading);
-			sail = 1.0;
-		}
-		else
-		{
-			m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
-			rudder = rudderCommand(m_courseToSteer, heading);
-			sail = sailCommand(relativeWindDirection);
-		}
+		m_courseToSteer = trueWindDirection;
+		rudder = rudderCommand(m_courseToSteer, heading);
+		sail = 1.0;
 	}
 	else
 	{

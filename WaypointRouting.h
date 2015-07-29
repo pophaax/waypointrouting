@@ -18,7 +18,6 @@ public:
 
 	void getCommands(double & rudder, double & sail, PositionModel boat,
 		double trueWindDirection, double heading, double relativeWindDirection);
-	//double calculateCourseToSteer(PositionModel boat, double trueWindDirection);
 	bool nextWaypoint(PositionModel boat);
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
@@ -34,7 +33,6 @@ public:
 	bool getGoingStarboard();
 
 private:
-	//double timedCTS(PositionModel boat, double trueWindDirection);
 	bool reachedRadius(double radius, PositionModel boat) const;
 
 	WaypointModel m_waypoint;
