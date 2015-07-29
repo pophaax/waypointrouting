@@ -33,14 +33,14 @@ void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel 
 		}
 		else
 		{
-			m_courseToSteer = getCTSFromCourseCalc(boat, trueWindDirection);
+			m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
 			rudder = rudderCommand(m_courseToSteer, heading);
 			sail = sailCommand(relativeWindDirection);
 		}
 	}
 	else
 	{
-		m_courseToSteer = getCTSFromCourseCalc(boat, trueWindDirection);
+		m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
 		rudder = rudderCommand(m_courseToSteer, heading);
 		sail = sailCommand(relativeWindDirection);
 	}
@@ -121,14 +121,6 @@ bool WaypointRouting::reachedRadius(double radius, PositionModel boat) const
 		reachedRadius = true;
 	return reachedRadius;
 }
-
-double WaypointRouting::getCTSFromCourseCalc(PositionModel boat, double trueWindDirection)
-{
-	m_courseCalc.setTrueWindDirection(trueWindDirection);
-	m_courseCalc.calculateCourseToSteer(boat, m_waypoint);
-	return m_courseCalc.getCTS();
-}
-
 
 double WaypointRouting::rudderCommand(double courseToSteer, double heading)
 {

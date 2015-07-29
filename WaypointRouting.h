@@ -36,7 +36,6 @@ public:
 private:
 	//double timedCTS(PositionModel boat, double trueWindDirection);
 	bool reachedRadius(double radius, PositionModel boat) const;
-	double getCTSFromCourseCalc(PositionModel boat, double trueWindDirection);
 
 	WaypointModel m_waypoint;
 	CourseCalculation m_courseCalc;
