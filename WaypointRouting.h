@@ -2,29 +2,33 @@
 #define __WAYPOINTROUTING_H__
 
 #include "models/WaypointModel.h"
+#include "models/SystemStateModel.h"
 #include "coursecalculation/CourseCalculation.h"
 #include "utility/Timer.h"
 
 class PositionModel;
 
+
 class WaypointRouting
 {
 public:
 	WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
-		double tackAngle, double sectorAngle);
+		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle);
 	WaypointRouting(const WaypointRouting &) = delete;
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
 
 	void getCommands(double & rudder, double & sail, PositionModel boat,
-		double trueWindDirection, double heading, double relativeWindDirection);
+		double trueWindDirection, double heading, SystemStateModel systemStateModel);
 	bool nextWaypoint(PositionModel boat);
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
 	void setInnerRadiusRatio(double ratio);
 	double rudderCommand(double courseToSteer, double heading);
 	double sailCommand(double relativeWindDirection);
-
+	double adjustTackAngle(SystemStateModel systemStateModel);
+	double getSpeed(SystemStateModel systemStateModel);
+	
 	double getDTW();
 	double getBTW();
 	double getTWD();
@@ -41,6 +45,8 @@ private:
 	double m_innerRadiusRatio;
 	Timer m_timer;
 	double m_courseToSteer;
+
+	double m_tackAngle, m_maxTackAngle, m_minTackSpeed;
 
 	const double m_starboardExtreme;
 	const double m_portExtreme;

@@ -5,11 +5,15 @@
 #include "utility/Timer.h"
 #include "utility/Utility.h"
 
+
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
-		double tackAngle, double sectorAngle) :
+		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle) :
 	m_waypoint(waypoint),
 	m_innerRadiusRatio(innerRadiusRatio),
 	m_courseToSteer(0),
+	m_tackAngle(tackAngle),
+	m_maxTackAngle(maxTackAngle),
+	m_minTackSpeed(minTackSpeed),
 	m_starboardExtreme(1),
 	m_portExtreme(-1),
 	m_closeReach(0),
@@ -25,7 +29,7 @@ WaypointRouting::~WaypointRouting()
 
 
 void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel boat,
-	double trueWindDirection, double heading, double relativeWindDirection)
+	double trueWindDirection, double heading, SystemStateModel systemStateModel)
 {
 	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat))
 	{
@@ -35,9 +39,11 @@ void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel 
 	}
 	else
 	{
+		m_courseCalc.setTackAngle(adjustTackAngle(systemStateModel));
+
 		m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
 		rudder = rudderCommand(m_courseToSteer, heading);
-		sail = sailCommand(relativeWindDirection);
+		sail = sailCommand(systemStateModel.windsensorModel.direction);
 	}
 }
 
@@ -142,4 +148,31 @@ double WaypointRouting::sailCommand(double relativeWindDirection)
 	double mid = (m_closeReach + m_running) / 2;
 	double delta = m_running - mid;
 	return mid - cos(Utility::degreeToRadian(relativeWindDirection)) * delta;
+}
+
+
+double WaypointRouting::adjustTackAngle(SystemStateModel systemStateModel)
+{
+	double adjustedTackAngle = m_tackAngle;
+	double speed = getSpeed(systemStateModel);
+	if (speed < m_minTackSpeed)
+	{
+		double extraAngle = m_maxTackAngle - m_tackAngle;
+		double factor = 1 - (speed / m_minTackSpeed);
+		adjustedTackAngle = factor * extraAngle + m_tackAngle;
+	}
+	return adjustedTackAngle;
+}
+
+
+
+double WaypointRouting::getSpeed(SystemStateModel systemStateModel)
+{
+	double speed = 0;
+	if (Utility::angleDifference(systemStateModel.gpsModel.heading,
+		systemStateModel.compassModel.heading) < 90)
+	{
+		speed = systemStateModel.gpsModel.speed;
+	}
+	return speed;
 }
