@@ -1,13 +1,14 @@
 #ifndef __WAYPOINTROUTING_H__
 #define __WAYPOINTROUTING_H__
 
-#include "models/WaypointModel.h"
-#include "models/SystemStateModel.h"
 #include "coursecalculation/CourseCalculation.h"
 #include "utility/Timer.h"
+#include "TackAngle.h"
+#include "Commands.h"
+#include "models/WaypointModel.h"
 
 class PositionModel;
-
+class SystemStateModel;
 
 class WaypointRouting
 {
@@ -24,10 +25,6 @@ public:
 	void setWaypoint(WaypointModel waypoint);
 	void setCourseCalcValues(double tackAngle, double sectorAngle);
 	void setInnerRadiusRatio(double ratio);
-	double rudderCommand(double courseToSteer, double heading);
-	double sailCommand(double relativeWindDirection);
-	double adjustTackAngle(SystemStateModel systemStateModel);
-	double getSpeed(SystemStateModel systemStateModel);
 	
 	double getDTW();
 	double getBTW();
@@ -39,19 +36,14 @@ public:
 private:
 	bool reachedRadius(double radius, PositionModel boat) const;
 
+	TackAngle m_tackAngleHandler;
+	Commands m_commandHandler;
 	WaypointModel m_waypoint;
 	CourseCalculation m_courseCalc;
 	CourseMath m_courseMath;
 	double m_innerRadiusRatio;
 	Timer m_timer;
 	double m_courseToSteer;
-
-	double m_tackAngle, m_maxTackAngle, m_minTackSpeed;
-
-	const double m_starboardExtreme;
-	const double m_portExtreme;
-	const double m_closeReach;
-	const double m_running;
 };
 
 #endif

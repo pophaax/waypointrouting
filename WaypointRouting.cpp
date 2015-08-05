@@ -1,23 +1,19 @@
 #include "WaypointRouting.h"
 #include <math.h>
-#include "models/WaypointModel.h"
 #include "coursecalculation/CourseCalculation.h"
 #include "utility/Timer.h"
 #include "utility/Utility.h"
+#include "models/WaypointModel.h"
+#include "models/SystemStateModel.h"
 
 
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
 		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle) :
+	m_tackAngleHandler(tackAngle, maxTackAngle, minTackSpeed),
+	m_commandHandler(),
 	m_waypoint(waypoint),
 	m_innerRadiusRatio(innerRadiusRatio),
-	m_courseToSteer(0),
-	m_tackAngle(tackAngle),
-	m_maxTackAngle(maxTackAngle),
-	m_minTackSpeed(minTackSpeed),
-	m_starboardExtreme(1),
-	m_portExtreme(-1),
-	m_closeReach(0),
-	m_running(1)
+	m_courseToSteer(0)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
@@ -34,16 +30,16 @@ void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel 
 	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat))
 	{
 		m_courseToSteer = trueWindDirection;
-		rudder = rudderCommand(m_courseToSteer, heading);
-		sail = m_running;
+		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
+		sail = m_commandHandler.runningSailCommand();
 	}
 	else
 	{
-		m_courseCalc.setTackAngle(adjustTackAngle(systemStateModel));
+		m_courseCalc.setTackAngle(m_tackAngleHandler.adjustedTackAngle(systemStateModel));
 
 		m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
-		rudder = rudderCommand(m_courseToSteer, heading);
-		sail = sailCommand(systemStateModel.windsensorModel.direction);
+		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
+		sail = m_commandHandler.sailCommand(systemStateModel.windsensorModel.direction);
 	}
 }
 
@@ -121,58 +117,4 @@ bool WaypointRouting::reachedRadius(double radius, PositionModel boat) const
 	if (dtw < radius)
 		reachedRadius = true;
 	return reachedRadius;
-}
-
-double WaypointRouting::rudderCommand(double courseToSteer, double heading)
-{
-	double offCourse = courseToSteer - heading;
-	double steeringValue = 0;
-
-	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
-		steeringValue = sin(Utility::degreeToRadian(offCourse));
-	}
-	else {
-		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
-			steeringValue = m_starboardExtreme;
-		}
-		else {
-			steeringValue = m_portExtreme;
-		}
-	}
-	return steeringValue;
-}
-
-
-double WaypointRouting::sailCommand(double relativeWindDirection)
-{
-	double mid = (m_closeReach + m_running) / 2;
-	double delta = m_running - mid;
-	return mid - cos(Utility::degreeToRadian(relativeWindDirection)) * delta;
-}
-
-
-double WaypointRouting::adjustTackAngle(SystemStateModel systemStateModel)
-{
-	double adjustedTackAngle = m_tackAngle;
-	double speed = getSpeed(systemStateModel);
-	if (speed < m_minTackSpeed)
-	{
-		double extraAngle = m_maxTackAngle - m_tackAngle;
-		double factor = 1 - (speed / m_minTackSpeed);
-		adjustedTackAngle = factor * extraAngle + m_tackAngle;
-	}
-	return adjustedTackAngle;
-}
-
-
-
-double WaypointRouting::getSpeed(SystemStateModel systemStateModel)
-{
-	double speed = 0;
-	if (Utility::angleDifference(systemStateModel.gpsModel.heading,
-		systemStateModel.compassModel.heading) < 90)
-	{
-		speed = systemStateModel.gpsModel.speed;
-	}
-	return speed;
 }
