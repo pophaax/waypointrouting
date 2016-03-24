@@ -32,7 +32,7 @@ void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel 
 		sail = m_lastSail;
 		return;
 	}
-	
+	 
 	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat)) {
 		
 		m_courseToSteer = trueWindDirection;
