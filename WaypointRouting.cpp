@@ -25,22 +25,30 @@ WaypointRouting::~WaypointRouting()
 
 
 void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel boat,
-	double trueWindDirection, double heading, SystemStateModel systemStateModel)
-{
-	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat))
-	{
+	double trueWindDirection, double heading, SystemStateModel systemStateModel) {
+
+	if(!adjustSteering(heading)) {
+		rudder = m_lastRudder;
+		sail = m_lastSail;
+		return;
+	}
+	
+	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat)) {
+		
 		m_courseToSteer = trueWindDirection;
 		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
 		sail = m_commandHandler.runningSailCommand();
-	}
-	else
-	{
+	} 
+	else {
 		m_courseCalc.setTackAngle(m_tackAngleHandler.adjustedTackAngle(systemStateModel));
 
 		m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
 		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
 		sail = m_commandHandler.sailCommand(systemStateModel.windsensorModel.direction);
 	}
+
+	m_lastRudder = rudder;
+	m_lastSail = sail;
 }
 
 
@@ -109,6 +117,13 @@ bool WaypointRouting::getGoingStarboard()
 	return m_courseCalc.getGoingStarboard();
 }
 
+void WaypointRouting::setUpdateInterval(double updateInterval) {
+	m_updateInterval = updateInterval;
+}
+
+void WaypointRouting::setMinimumDegreeLimit(double degLimit) {
+	m_degLimit = degLimit;
+}
 
 bool WaypointRouting::reachedRadius(double radius, PositionModel boat) const
 {
@@ -117,4 +132,16 @@ bool WaypointRouting::reachedRadius(double radius, PositionModel boat) const
 	if (dtw < radius)
 		reachedRadius = true;
 	return reachedRadius;
+}
+
+bool WaypointRouting::adjustSteering(double heading) {
+	if(m_timePassed > m_updateInterval) {
+		m_timePassed = 0;
+
+		if(abs(m_courseToSteer - heading) > m_degLimit)			
+			return true;		
+	}
+
+	m_timePassed += m_timer.timePassed();
+	return false;
 }

@@ -33,8 +33,13 @@ public:
 	bool getTack();
 	bool getGoingStarboard();
 
+	void setUpdateInterval(double updateInterval);
+	void setMinimumDegreeLimit(double degLimit);
+	
 private:
 	bool reachedRadius(double radius, PositionModel boat) const;
+
+	bool adjustSteering(double heading);
 
 	TackAngle m_tackAngleHandler;
 	Commands m_commandHandler;
@@ -44,6 +49,10 @@ private:
 	double m_innerRadiusRatio;
 	Timer m_timer;
 	double m_courseToSteer;
+
+	double m_updateInterval, m_degLimit;
+	double m_lastRudder, m_lastSail;
+	double m_timePassed;
 };
 
 #endif
