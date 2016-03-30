@@ -3,6 +3,7 @@
 
 #include "coursecalculation/CourseCalculation.h"
 #include "utility/Timer.h"
+#include "utility/Utility.h"
 #include "TackAngle.h"
 #include "Commands.h"
 #include "models/WaypointModel.h"
@@ -39,7 +40,7 @@ public:
 private:
 	bool reachedRadius(double radius, PositionModel boat) const;
 
-	bool adjustSteering(double heading);
+	bool adjustSteering(double relativeWindDirection);
 
 	TackAngle m_tackAngleHandler;
 	Commands m_commandHandler;
@@ -50,8 +51,9 @@ private:
 	Timer m_timer;
 	double m_courseToSteer;
 
+	Timer m_intervalTimer;
 	double m_updateInterval, m_degLimit;
-	double m_lastRudder, m_lastSail;
+	double m_lastSail, m_lastRWD;
 	double m_timePassed;
 };
 
