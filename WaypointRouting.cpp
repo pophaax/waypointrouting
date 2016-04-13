@@ -18,7 +18,7 @@ WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
 
-	m_intervalTimer.start();
+	m_sailControlTimer.start();
 }
 
 WaypointRouting::~WaypointRouting()
@@ -59,10 +59,10 @@ bool WaypointRouting::nextWaypoint(PositionModel boat)
 	bool nextWaypoint = false;
 	if (m_waypoint.time > 0)
 	{
-		if (m_timer.timeReached(m_waypoint.time))
+		if (m_waypointTimer.timeReached(m_waypoint.time))
 			nextWaypoint = true;
 		if (reachedRadius(m_waypoint.radius, boat))
-			m_timer.start();
+			m_waypointTimer.start();
 	}
 	else
 	{
@@ -75,7 +75,7 @@ bool WaypointRouting::nextWaypoint(PositionModel boat)
 void WaypointRouting::setWaypoint(WaypointModel waypoint)
 {
 	m_waypoint = waypoint;
-	m_timer.stop();
+	m_waypointTimer.stop();
 }
 
 void WaypointRouting::setCourseCalcValues(double tackAngle, double sectorAngle)
@@ -137,7 +137,7 @@ bool WaypointRouting::reachedRadius(double radius, PositionModel boat) const
 }
 
 bool WaypointRouting::adjustSteering(double relativeWindDirection) {
-	m_timePassed += m_intervalTimer.timePassed();
+	m_timePassed += m_sailControlTimer.timePassed();
 
 	if(m_timePassed > m_updateInterval) {
 		m_timePassed = 0;

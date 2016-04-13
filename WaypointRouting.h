@@ -48,10 +48,10 @@ private:
 	CourseCalculation m_courseCalc;
 	CourseMath m_courseMath;
 	double m_innerRadiusRatio;
-	Timer m_timer;
+	Timer m_waypointTimer;
 	double m_courseToSteer;
 
-	Timer m_intervalTimer;
+	Timer m_sailControlTimer;
 	double m_updateInterval, m_degLimit;
 	double m_lastSail, m_lastRWD;
 	double m_timePassed;
