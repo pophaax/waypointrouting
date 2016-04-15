@@ -17,7 +17,7 @@ WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
-
+	m_lastRWD = 0;
 	m_sailControlTimer.start();
 }
 
