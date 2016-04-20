@@ -17,7 +17,7 @@ WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
-
+	m_lastRWD = 0;
 	m_sailControlTimer.start();
 }
 
@@ -142,8 +142,10 @@ bool WaypointRouting::adjustSteering(double relativeWindDirection) {
 	if(m_timePassed > m_updateInterval) {
 		m_timePassed = 0;
 
-		if(Utility::angleDifference(relativeWindDirection, m_lastRWD) > m_degLimit)
+		if(Utility::angleDifference(relativeWindDirection, m_lastRWD) > m_degLimit) {
+			m_sailControlTimer.reset();
 			return true;	
+		}
 	}
 
 	return false;
