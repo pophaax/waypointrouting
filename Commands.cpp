@@ -37,9 +37,13 @@ double Commands::rudderCommand(double courseToSteer, double heading)
 
 double Commands::sailCommand(double relativeWindDirection)
 {
-	double mid = (m_closeReach + m_running) / 2;
-	double delta = m_running - mid;
-	return mid - cos(Utility::degreeToRadian(relativeWindDirection)) * delta;
+	if (relativeWindDirection > 180) {
+		return relativeWindDirection = 360 - relativeWindDirection;
+	} else if (relativeWindDirection < 45) {
+		return m_closeReach;
+	} else {
+		return relativeWindDirection * (m_running - m_closeReach) / (180 - 45);
+	}
 }
 
 
