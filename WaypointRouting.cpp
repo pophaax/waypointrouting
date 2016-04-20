@@ -142,8 +142,10 @@ bool WaypointRouting::adjustSteering(double relativeWindDirection) {
 	if(m_timePassed > m_updateInterval) {
 		m_timePassed = 0;
 
-		if(Utility::angleDifference(relativeWindDirection, m_lastRWD) > m_degLimit)
+		if(Utility::angleDifference(relativeWindDirection, m_lastRWD) > m_degLimit) {
+			m_sailControlTimer.reset();
 			return true;	
+		}
 	}
 
 	return false;
