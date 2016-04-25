@@ -14,20 +14,18 @@ Commands::~Commands(){}
 
 double Commands::rudderCommand(double courseToSteer, double heading) {
 	double offCourse = courseToSteer - heading;
-	double steeringValue = 0;
 
 	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
-		steeringValue = sin(Utility::degreeToRadian(offCourse));
-	}
-	else {
+		offCourse = sin(Utility::degreeToRadian(offCourse));
+	} else {
 		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
-			steeringValue = m_starboardExtreme;
+			offCourse = m_starboardExtreme;
 		}
 		else {
-			steeringValue = m_portExtreme;
+			offCourse = m_portExtreme;
 		}
 	}
-	return steeringValue;
+	return offCourse;
 }
 
 
