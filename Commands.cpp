@@ -1,6 +1,7 @@
 #include "Commands.h"
 #include <math.h>
 #include "utility/Utility.h"
+#include <iostream>
 
 Commands::Commands() :
 	m_starboardExtreme(1),
@@ -13,10 +14,13 @@ Commands::~Commands(){}
 
 
 double Commands::rudderCommand(double courseToSteer, double heading) {
-	double offCourse = courseToSteer - heading;
-
+	double offCourse = Utility::limitAngleRange(courseToSteer - heading);
 	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
-		offCourse = sin(Utility::degreeToRadian(offCourse));
+		if (offCourse > 180) {
+		
+			offCourse -= 360;
+		}
+		return m_portExtreme + (offCourse + 90) * (m_starboardExtreme - m_portExtreme) / 180;			
 	} else {
 		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
 			offCourse = m_starboardExtreme;
