@@ -13,7 +13,9 @@ WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio
 	m_commandHandler(),
 	m_waypoint(waypoint),
 	m_innerRadiusRatio(innerRadiusRatio),
-	m_courseToSteer(0)
+	m_courseToSteer(0),
+	m_maxCommandAngle(90.0),
+	m_rudderSpeedMin(1.0)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
@@ -29,17 +31,30 @@ WaypointRouting::~WaypointRouting()
 void WaypointRouting::getCommands(double & rudder, double & sail, PositionModel boat,
 	double trueWindDirection, double heading, SystemStateModel systemStateModel) {
 
+	double speed = Utility::directionAdjustedSpeed(systemStateModel.gpsModel.heading,
+												  										systemStateModel.compassModel.heading,
+												  										systemStateModel.gpsModel.speed);
+	double commandAngle = m_maxCommandAngle;
+	
 	if (m_waypoint.time > 0 && reachedRadius(m_waypoint.radius * m_innerRadiusRatio, boat)) {
 		
+		if(speed > m_rudderSpeedMin) {
+			commandAngle = speed/m_rudderSpeedMin * m_maxCommandAngle;		
+		}
+		
 		m_courseToSteer = trueWindDirection;
-		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
+		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading,commandAngle);
 		sail = m_commandHandler.runningSailCommand();
 	} 
 	else {
 		m_courseCalc.setTackAngle(m_tackAngleHandler.adjustedTackAngle(systemStateModel));
 
+		if(speed > m_rudderSpeedMin) {
+			commandAngle = speed/m_rudderSpeedMin * m_maxCommandAngle;		
+		}
+		
 		m_courseToSteer = m_courseCalc.calculateCourseToSteer(boat, m_waypoint, trueWindDirection);
-		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading);
+		rudder = m_commandHandler.rudderCommand(m_courseToSteer, heading,commandAngle);
 		sail = m_commandHandler.sailCommand(systemStateModel.windsensorModel.direction);
 	}
 

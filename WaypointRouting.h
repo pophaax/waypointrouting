@@ -50,6 +50,8 @@ private:
 	double m_innerRadiusRatio;
 	Timer m_waypointTimer;
 	double m_courseToSteer;
+	double m_maxCommandAngle;
+	double m_rudderSpeedMin;
 
 	Timer m_sailControlTimer;
 	double m_updateInterval, m_degLimit;

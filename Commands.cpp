@@ -13,22 +13,27 @@ Commands::Commands() :
 Commands::~Commands(){}
 
 
-double Commands::rudderCommand(double courseToSteer, double heading) {
+double Commands::rudderCommand(double courseToSteer, double heading,double maxCommandAngle) {
 	double offCourse = Utility::limitAngleRange(courseToSteer - heading);
-	if (cos(Utility::degreeToRadian(offCourse)) > 0) { //offCourse > -90 && offCourse < 90
+	
+	if (offCourse > maxCommandAngle*-1 && offCourse < maxCommandAngle) {
 		if (offCourse > 180) {
 		
 			offCourse -= 360;
 		}
+		
 		return m_portExtreme + (offCourse + 90) * (m_starboardExtreme - m_portExtreme) / 180;			
 	} else {
-		if (sin(Utility::degreeToRadian(offCourse)) > 0) { //offCourse >= 90
+		
+		if (offCourse > maxCommandAngle) { 
 			offCourse = m_starboardExtreme;
 		}
 		else {
 			offCourse = m_portExtreme;
 		}
+		
 	}
+	
 	return offCourse;
 }
 

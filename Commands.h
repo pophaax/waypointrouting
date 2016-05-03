@@ -7,7 +7,7 @@ public:
 	Commands();
 	~Commands();
 
-	double rudderCommand(double courseToSteer, double heading);
+	double rudderCommand(double courseToSteer, double heading,double maxCommandAngle);
 	double sailCommand(double relativeWindDirection);
 	double runningSailCommand();
 
