@@ -12,9 +12,8 @@ public:
 	double adjustedTackAngle(SystemStateModel systemStateModel);
 
 private:
-	double getSpeed(SystemStateModel systemStateModel);
-
 	double m_tackAngle, m_maxTackAngle, m_minTackSpeed;
+	
 };
 
 #endif

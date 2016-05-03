@@ -14,29 +14,18 @@ TackAngle::~TackAngle()
 
 }
 
-
 double TackAngle::adjustedTackAngle(SystemStateModel systemStateModel)
 {
 	double adjustedTackAngle = m_tackAngle;
-	double speed = getSpeed(systemStateModel);
-	if (speed < m_minTackSpeed)
+	double speed = Utility::directionAdjustedSpeed(systemStateModel.gpsModel.heading,
+												  										systemStateModel.compassModel.heading,
+												  										systemStateModel.gpsModel.speed);
+	
+	if (speed <  m_minTackSpeed)
 	{
 		double extraAngle = m_maxTackAngle - m_tackAngle;
 		double factor = 1 - (speed / m_minTackSpeed);
 		adjustedTackAngle = factor * extraAngle + m_tackAngle;
 	}
 	return adjustedTackAngle;
-}
-
-
-
-double TackAngle::getSpeed(SystemStateModel systemStateModel)
-{
-	double speed = 0;
-	if (Utility::angleDifference(systemStateModel.gpsModel.heading,
-		systemStateModel.compassModel.heading) < 90)
-	{
-		speed = systemStateModel.gpsModel.speed;
-	}
-	return speed;
 }
