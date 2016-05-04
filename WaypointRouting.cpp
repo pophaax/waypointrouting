@@ -8,14 +8,15 @@
 
 
 WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
-		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle) :
+		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle, 
+		 double maxCommandAngle, double  rudderSpeedMin) :
 	m_tackAngleHandler(tackAngle, maxTackAngle, minTackSpeed),
 	m_commandHandler(),
 	m_waypoint(waypoint),
 	m_innerRadiusRatio(innerRadiusRatio),
 	m_courseToSteer(0),
-	m_maxCommandAngle(90.0),
-	m_rudderSpeedMin(1.0)
+	m_maxCommandAngle(maxCommandAngle),
+	m_rudderSpeedMin(rudderSpeedMin)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);

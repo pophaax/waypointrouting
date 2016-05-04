@@ -15,7 +15,8 @@ class WaypointRouting
 {
 public:
 	WaypointRouting(WaypointModel waypoint, double innerRadiusRatio,
-		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle);
+		double tackAngle, double maxTackAngle, double minTackSpeed, double sectorAngle, 
+		double maxCommandAngle, double  rudderSpeedMin);
 	WaypointRouting(const WaypointRouting &) = delete;
 	WaypointRouting & operator=(const WaypointRouting &) = delete;	
 	~WaypointRouting();
