@@ -16,24 +16,23 @@ Commands::~Commands(){}
 double Commands::rudderCommand(double courseToSteer, double heading,double maxCommandAngle) {
 	double offCourse = Utility::limitAngleRange(courseToSteer - heading);
 	
-	if (offCourse > maxCommandAngle*-1 && offCourse < maxCommandAngle) {
-		if (offCourse > 180) {
-		
-			offCourse -= 360;
-		}
-		
-		return m_portExtreme + (offCourse + 90) * (m_starboardExtreme - m_portExtreme) / 180;			
+	if (offCourse > 180) {
+		offCourse -= 360;
+	}
+
+	if (offCourse > maxCommandAngle*-1 && offCourse <= maxCommandAngle) {
+		return m_portExtreme + (offCourse +maxCommandAngle ) * (m_starboardExtreme - m_portExtreme) / (maxCommandAngle*2);			
 	} else {
-		
+
 		if (offCourse > maxCommandAngle) { 
 			offCourse = m_starboardExtreme;
 		}
 		else {
 			offCourse = m_portExtreme;
 		}
-		
+
 	}
-	
+
 	return offCourse;
 }
 
