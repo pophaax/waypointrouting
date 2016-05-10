@@ -16,11 +16,15 @@ WaypointRouting::WaypointRouting(WaypointModel waypoint, double innerRadiusRatio
 	m_innerRadiusRatio(innerRadiusRatio),
 	m_courseToSteer(0),
 	m_maxCommandAngle(maxCommandAngle),
-	m_rudderSpeedMin(rudderSpeedMin)
+	m_rudderSpeedMin(rudderSpeedMin),
+	m_updateInterval(0.0),
+	m_degLimit(0.0),
+	m_lastSail(0.0),
+	m_timePassed(0.0)
 {
 	m_courseCalc.setTackAngle(tackAngle);
 	m_courseCalc.setSectorAngle(sectorAngle);
-	m_lastRWD = 0;
+	m_lastRWD = 0.0;
 	m_sailControlTimer.start();
 }
 
